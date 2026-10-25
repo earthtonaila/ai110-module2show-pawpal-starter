@@ -1,74 +1,56 @@
-"""PawPal+ class skeletons based on diagrams/uml_draft.mmd.
+"""PawPal+ core classes: Task, Pet, Owner, and Scheduler."""
 
-Only the structure is defined here (attributes, method names, and inputs).
-The business logic has not been implemented yet.
-"""
-
-from dataclasses import dataclass, field
 import datetime
+from dataclasses import dataclass, field
+
+
+@dataclass
+class Task:
+    """A single pet-care task, such as a walk or a feeding."""
+
+    description: str
+    time: datetime.time
+    frequency: str = "once"  # for example: "once", "daily", "weekly"
+    completed: bool = False
+
+    def mark_complete(self):
+        """Mark this task as done."""
+        self.completed = True
 
 
 @dataclass
 class Pet:
-    """Stores a pet's basic information."""
+    """Stores a pet's details and its list of tasks."""
 
     name: str
     species: str
     age: int
+    tasks: list[Task] = field(default_factory=list)
 
     def get_info(self) -> str:
         """Return the pet's information as text."""
-        raise NotImplementedError
+        return f"{self.name} ({self.species}, age {self.age})"
 
     def update_info(self, name=None, species=None, age=None):
         """Update the pet's details. Only the values you pass in are changed."""
-        raise NotImplementedError
+        if name is not None:
+            self.name = name
+        if species is not None:
+            self.species = species
+        if age is not None:
+            self.age = age
 
+    def add_task(self, task: Task):
+        """Add a task to this pet."""
+        self.tasks.append(task)
 
-@dataclass
-class Walk:
-    """A scheduled walk for one specific pet."""
+    def remove_task(self, task: Task):
+        """Remove a task from this pet."""
+        self.tasks.remove(task)
 
-    pet: Pet  # relationship: a Walk belongs to one Pet
-    date: datetime.date
-    time: datetime.time
-    duration: int  # length of the walk in minutes
-    completed: bool = False  # becomes True once the walk is done
-
-    def reschedule_walk(self, new_date: datetime.date, new_time: datetime.time):
-        """Change the walk's date and time."""
-        raise NotImplementedError
-
-    def mark_completed(self):
-        """Mark this walk as done."""
-        raise NotImplementedError
-
-
-@dataclass
-class TaskManager:
-    """Keeps track of pet-care tasks (walks)."""
-
-    tasks: list[Walk] = field(default_factory=list)  # relationship: manages many Walks
-
-    def add_task(self, walk: Walk):
-        """Add a walk to the task list (this is how a walk gets scheduled)."""
-        raise NotImplementedError
-
-    def remove_task(self, walk: Walk):
-        """Remove a single walk from the task list."""
-        raise NotImplementedError
-
-    def get_tasks_for_pet(self, pet: Pet) -> list[Walk]:
-        """Return all walks that belong to the given pet."""
-        raise NotImplementedError
-
-    def remove_tasks_for_pet(self, pet: Pet):
-        """Remove every walk that belongs to the given pet."""
-        raise NotImplementedError
-
-    def view_today_tasks(self, today: datetime.date) -> list[Walk]:
-        """Return the walks scheduled for the given day."""
-        raise NotImplementedError
+    def get_tasks(self) -> list[Task]:
+        """Return all of this pet's tasks."""
+        return self.tasks
 
 
 @dataclass
@@ -76,16 +58,39 @@ class Owner:
     """A person who uses PawPal+ to manage their pets."""
 
     name: str
-    pets: list[Pet] = field(default_factory=list)  # relationship: one Owner has many Pets
+    pets: list[Pet] = field(default_factory=list)
 
     def add_pet(self, pet: Pet):
         """Add a pet to the owner's list."""
-        raise NotImplementedError
+        self.pets.append(pet)
 
-    def remove_pet(self, pet: Pet, task_manager: TaskManager):
-        """Remove a pet from the owner's list and remove its walks from the task manager."""
-        raise NotImplementedError
+    def remove_pet(self, pet: Pet):
+        """Remove a pet (and its tasks) from the owner's list."""
+        self.pets.remove(pet)
 
     def view_pets(self) -> list[Pet]:
         """Return all of the owner's pets."""
-        raise NotImplementedError
+        return self.pets
+
+    def get_all_tasks(self) -> list[Task]:
+        """Collect and return the tasks from every pet."""
+        all_tasks = []
+        for pet in self.pets:
+            all_tasks.extend(pet.get_tasks())
+        return all_tasks
+
+
+class Scheduler:
+    """Organizes an owner's tasks. It gets tasks through owner.get_all_tasks()."""
+
+    def __init__(self, owner: Owner):
+        """Create a scheduler that works with the given owner's tasks."""
+        self.owner = owner
+
+    def sort_tasks_by_time(self) -> list[Task]:
+        """Return all tasks ordered from earliest to latest time."""
+        return sorted(self.owner.get_all_tasks(), key=lambda task: task.time)
+
+    def get_incomplete_tasks(self) -> list[Task]:
+        """Return only the tasks that are not completed yet."""
+        return [task for task in self.owner.get_all_tasks() if not task.completed]

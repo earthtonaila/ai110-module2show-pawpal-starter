@@ -37,3 +37,4 @@ classDiagram
     Owner "1" --> "*" Pet : has
     Walk "*" --> "1" Pet : belongs to
     TaskManager "1" --> "*" Walk : manages
+    Owner ..> TaskManager : uses

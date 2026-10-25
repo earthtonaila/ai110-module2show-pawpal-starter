@@ -112,6 +112,10 @@ Yes, my design changed during implementation
 - How did you use AI tools during this project (for example: design brainstorming, debugging, refactoring)?
 - What kinds of prompts or questions were most helpful?
 
+I used Claude's Anthropic AI agent in VS Code to help identify areas of improvement in my initial UML design, translate my improved UML design into Python classes, and implement the main functionality of PawPal+. In addition to Claude, I also used ChatGPT to clarify the instructions given through CodePath for this project and provide step by step directions on how to navigate my chosen IDE.
+
+I found that specifying at the end of my prompt to not make any changes to the code directly or any related file particularly helpful as it allowed me to verify the changess suggested by Claude first before proceeding. I also found that providing additional context and being clear on what I wanted to be particularly helpful when prompting.
+
 **b. Judgment and verification**
 
 - Describe one moment where you did not accept an AI suggestion as-is.

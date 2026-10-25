@@ -53,6 +53,11 @@ Paste a sample of your app's CLI or Streamlit output here so a reader can see wh
 #   09:00 — Feeding (10 min) [priority: high]
 #   ...
 ```
+=== Today's Schedule ===
+07:30 AM - Feed Luna
+08:00 AM - Feed Buddy
+09:30 AM - Walk Buddy
+========================
 
 ## 🧪 Testing PawPal+
 
@@ -92,3 +97,17 @@ Describe your app in numbered steps so a reader can follow along without watchin
 5. <!-- Add more steps as needed -->
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+
+## Implementation Summary
+
+PawPal+ is a Python-based pet-care management application that helps owners organize and track activities for multiple pets.
+
+The application uses four main classes:
+    1. Task: represents an individual pet-care activity, including its description, scheduled time, frequency, and completion status
+    2. Pet: stores information about a pet and manages its assigned tasks
+    3. Owner: manages multiple pets and combines their tasks using the get_all_tasks() method
+    4. Scheduler: retrieves tasks through the Owner class, sorts them by time, and identifies incomplete activities
+
+These classes work together to provide a centralized schedule for all pets. Each pet stores its own tasks, the owner combines those tasks, and the scheduler organizes them into readable schedule
+
+The application includes a command-line demo in main.py and automated tests using pytest to verify task completion and task addition
