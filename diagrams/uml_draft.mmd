@@ -2,17 +2,17 @@ classDiagram
     class Owner {
         +String name
         +List pets
-        +add_pet()
-        +remove_pet()
-        +view_pets()
+        +add_pet(pet)
+        +remove_pet(pet, task_manager)
+        +view_pets() List
     }
 
     class Pet {
         +String name
         +String species
         +int age
-        +get_info()
-        +update_info()
+        +get_info() String
+        +update_info(name, species, age)
     }
 
     class Walk {
@@ -20,18 +20,20 @@ classDiagram
         +Date date
         +Time time
         +int duration
-        +schedule_walk()
-        +reschedule_walk()
+        +bool completed
+        +reschedule_walk(new_date, new_time)
+        +mark_completed()
     }
 
     class TaskManager {
         +List tasks
-        +add_task()
-        +remove_task()
-        +view_today_tasks()
+        +add_task(walk)
+        +remove_task(walk)
+        +get_tasks_for_pet(pet) List
+        +remove_tasks_for_pet(pet)
+        +view_today_tasks(today) List
     }
 
     Owner "1" --> "*" Pet : has
-    Pet "1" --> "*" Walk : has
+    Walk "*" --> "1" Pet : belongs to
     TaskManager "1" --> "*" Walk : manages
-
