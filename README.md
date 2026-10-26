@@ -63,17 +63,33 @@ Paste a sample of your app's CLI or Streamlit output here so a reader can see wh
 
 ```bash
 # Run the full test suite:
-pytest
+python -m pytest
 
 # Run with coverage:
 pytest --cov
 ```
+The automated tests verify the following behaviors:
+    1. Task Sorting - confirms that tasks are sorted in chronological order
+    2. Recurring Tasks - verifies that completing a daily task creates a new incomplete task scheduled for the following day
+    3. Conflict Detection - checks that the scheduler identifies tasks scheduled at the same date and time
+    4. Task Completion - confirms that completed tasks are correctly marked as finished
+    5. Task Management - verifies that tasks can be added to a pet's task list
 
 Sample test output:
 
 ```
-# Paste your pytest output here
+============================== test session starts ===============================
+platform darwin -- Python 3.12.6, pytest-9.1.1, pluggy-1.7.0
+rootdir: /Users/nailasurahmat/Desktop/Code/ai110-module2show-pawpal-starter
+plugins: anyio-4.15.1
+collected 15 items                                                               
+
+tests/test_pawpal.py ...............                                       [100%]
+
+=============================== 15 passed in 0.02s ===============================
 ```
+Confidence Level : 4/5 stars
+Based on the automated test results, I am confident that PawPal+'s core scheduling features work as intended. The tests help verify that tasks are sorted correctly, recurring tasks are generated, and scheduling conflicts are detected. However, there's still room for improvement. For example, the current conflict detection algorithm checks for tasks scheduled at exactly the same date and time but does not detect overlapping tasks with different start times. Additional edge-case testing and more advanced scheduling features would help improve the system's reliability.
 
 ## 📐 Smarter Scheduling
 

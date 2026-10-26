@@ -1,5 +1,5 @@
 
-from datetime import date, time
+from datetime import date, time, timedelta
 
 import pytest
 
@@ -177,6 +177,107 @@ def test_sorting_and_filtering_still_work_with_recurring_tasks():
     assert [t.description for t in scheduler.sort_tasks_by_time()] == ["Feed", "Walk", "Walk"]
     assert len(scheduler.filter_tasks(pet_name="buddy", completed=False)) == 2
     assert len(scheduler.get_incomplete_tasks()) == 2
+
+def test_sorting_correctness():
+    """Verify tasks are sorted from earliest to latest."""
+
+    owner = Owner("Alex")
+    buddy = Pet("Buddy", "Dog", 3)
+    owner.add_pet(buddy)
+
+    # Add tasks out of order
+    task1 = Task("Walk", time(14, 0))
+    task2 = Task("Feed", time(8, 0))
+    task3 = Task("Play", time(11, 0))
+
+    buddy.add_task(task1)
+    buddy.add_task(task2)
+    buddy.add_task(task3)
+
+    scheduler = Scheduler(owner)
+
+    sorted_tasks = scheduler.sort_tasks_by_time()
+
+    assert sorted_tasks == [task2, task3, task1]
+
+
+def test_daily_task_recurrence():
+    """Verify completing a daily task creates tomorrow's task."""
+
+    owner = Owner("Alex")
+    buddy = Pet("Buddy", "Dog", 3)
+    owner.add_pet(buddy)
+
+    today = date(2026, 10, 25)
+
+    daily_task = Task(
+        "Walk Buddy",
+        time(9, 0),
+        "daily",
+        due_date=today
+    )
+
+    buddy.add_task(daily_task)
+
+    scheduler = Scheduler(owner)
+
+    next_task = scheduler.mark_task_complete(buddy, daily_task)
+
+    # Original task is completed
+    assert daily_task.completed is True
+
+    # A new task was created
+    assert next_task is not None
+
+    # The new task is due the following day
+    assert next_task.due_date == today + timedelta(days=1)
+
+    # The new task starts incomplete
+    assert next_task.completed is False
+
+    # The new task belongs to Buddy
+    assert next_task in buddy.get_tasks()
+
+
+def test_conflict_detection():
+    """Verify tasks at the same date and time cause a warning."""
+
+    owner = Owner("Alex")
+
+    buddy = Pet("Buddy", "Dog", 3)
+    luna = Pet("Luna", "Cat", 2)
+
+    owner.add_pet(buddy)
+    owner.add_pet(luna)
+
+    # Two tasks scheduled at the same time
+    task1 = Task(
+        "Walk Buddy",
+        time(9, 0),
+        "daily",
+        due_date=date(2026, 10, 26)
+    )
+
+    task2 = Task(
+        "Feed Luna",
+        time(9, 0),
+        "daily",
+        due_date=date(2026, 10, 26)
+    )
+
+    buddy.add_task(task1)
+    luna.add_task(task2)
+
+    scheduler = Scheduler(owner)
+
+    warnings = scheduler.detect_conflicts()
+
+    # At least one conflict should be detected
+    assert len(warnings) > 0
+
+    # The warning should mention the conflicting tasks
+    assert "Walk Buddy" in warnings[0]
+    assert "Feed Luna" in warnings[0]
 
 # Initial code to add a pet in app.py :
 # if st.button("Add Buddy"):
