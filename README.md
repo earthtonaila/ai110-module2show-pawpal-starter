@@ -81,10 +81,10 @@ Sample test output:
 
 | Feature | Method(s) | Notes |
 |---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+| Task sorting | Scheduler.sort_tasks_by_time() | The scheduler uses Python's sorted() function with a lambda expression to organize tasks chronologically based on their scheduled time. This ensures that earlier activities appear before later ones, regardless of the order in which the tasks were added. |
+| Filtering | Scheduler.filter_tasks() | The scheduler allows users to filter tasks by pet name, completion status, or both. For example, users can retrieve all tasks belonging to Buddy or display only incomplete tasks. The filtering algorithm loops through the owner's pets and collect tasks matching the selected criteria |
+| Conflict handling | Scheduler.detect_conflicts() | scheduler detects if multiple incomplete tasks have same due date and scheduled time. uses dictionary to track occupied scheduling slots. when another task is found at an occupied slot, the method generates a warning message instead of crashing the program. The algorithm only checks exact date-and-time matches and doesn't detect overlapping tasks with different start times because task durations are not currently tracked. |
+| Recurring tasks | Task.mark_complete(), Scheduler.mark_task_complete() | one-time tasks don't repeat, daily tasks repeat after one day, weekly tasks repeat after seven days |
 
 ## 📸 Demo Walkthrough
 

@@ -103,6 +103,16 @@ Yes, my design changed during implementation
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
 
+One tradeoff I made in my PawPal+ scheduling system was prioritizing simplicity and readability over advanced conflict detection.
+
+My detect_conflicts() method uses a dictionary to identify tasks scheduled for the exact same date and time. This approach is efficient because it only needs to examine each task once, and it is easy to understand and debug.
+
+However, this algorithm only detects exact time matches. For example, if one task begins at 9:00 AM and another begins at 9:15 AM, the scheduler will not identify a conflict, even if the tasks overlap in duration.
+
+I chose this simpler approach because my current Task class does not track task durations, and the application is designed as a basic pet-care scheduler. A future improvement would be to add task durations and check for overlapping time intervals.
+
+I also evaluated whether the algorithm could be simplified using more concise Python syntax. I preferred keeping explicit loops and conditions because they make the logic easier to read, explain, and maintain while learning Python.
+
 ---
 
 ## 3. AI Collaboration
