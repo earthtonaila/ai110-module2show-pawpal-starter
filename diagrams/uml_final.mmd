@@ -1,0 +1,50 @@
+classDiagram
+    class Task {
+        <<dataclass>>
+        +str description
+        +time time
+        +str frequency
+        +bool completed
+        +date due_date
+        +mark_complete() Task or None
+    }
+
+    class Pet {
+        <<dataclass>>
+        +str name
+        +str species
+        +int age
+        +list~Task~ tasks
+        +get_info() str
+        +update_info(name, species, age)
+        +add_task(Task task)
+        +remove_task(Task task)
+        +get_tasks() list~Task~
+    }
+
+    class Owner {
+        <<dataclass>>
+        +str name
+        +list~Pet~ pets
+        +add_pet(Pet pet)
+        +remove_pet(Pet pet)
+        +view_pets() list~Pet~
+        +get_all_tasks() list~Task~
+    }
+
+    class Scheduler {
+        +Owner owner
+        +sort_tasks_by_time() list~Task~
+        +get_incomplete_tasks() list~Task~
+        +filter_tasks(pet_name, completed) list~Task~
+        +find_pet_for_task(Task task) Pet or None
+        +mark_task_complete(Pet pet, Task task) Task or None
+        +detect_conflicts() list~str~
+    }
+
+    Owner "1" --> "*" Pet : has
+    Pet "1" --> "*" Task : has
+    Scheduler "1" --> "1" Owner : organizes tasks of
+    Scheduler ..> Pet : finds owner pet, adds next task
+    Scheduler ..> Task : sorts, filters, checks conflicts
+    Task ..> Task : creates next occurrence

@@ -10,6 +10,7 @@ if "owner" not in st.session_state:
 
 # Retrieve the saved Owner
 owner = st.session_state["owner"]
+scheduler = Scheduler(owner)
 
 st.title("🐾 PawPal+")
 
@@ -92,8 +93,7 @@ st.divider()
 # ---------- Schedule ----------
 st.subheader("Schedule")
 
-# The Scheduler gets every pet's tasks through owner.get_all_tasks()
-scheduler = Scheduler(owner)
+# The Scheduler (created at the top) gets every pet's tasks through owner.get_all_tasks()
 only_incomplete = st.checkbox("Show only incomplete tasks")
 
 if only_incomplete:
@@ -118,3 +118,98 @@ if tasks:
                 st.rerun()
 else:
     st.info("No tasks to show yet.")
+
+
+# ========================================
+# SMART SCHEDULING DASHBOARD
+# ========================================
+
+st.header("🐾 Smart Scheduling Dashboard")
+
+# 1. SORT TASKS BY TIME
+st.subheader("📅 Upcoming Tasks")
+
+sorted_tasks = scheduler.sort_tasks_by_time()
+
+if sorted_tasks:
+    task_data = []
+
+    for task in sorted_tasks:
+        task_data.append({
+            "Pet": scheduler.find_pet_for_task(task).name,
+            "Task": task.description,
+            "Date": str(task.due_date),
+            "Time": task.time.strftime("%I:%M %p"),
+            "Frequency": task.frequency,
+            "Status": "Completed" if task.completed else "Pending"
+        })
+
+    st.table(task_data)
+
+else:
+    st.info("No tasks scheduled yet. Add a task to get started!")
+
+
+# 2. FILTER TASKS
+st.subheader("🔍 Filter Tasks")
+
+filter_options = ["All Pets"] + [
+    pet.name for pet in owner.view_pets()
+]
+
+selected_pet = st.selectbox(
+    "Choose a pet:",
+    filter_options
+)
+
+selected_status = st.selectbox(
+    "Choose task status:",
+    ["All Tasks", "Incomplete", "Completed"]
+)
+
+pet_filter = (
+    None if selected_pet == "All Pets"
+    else selected_pet
+)
+
+if selected_status == "Incomplete":
+    completed_filter = False
+elif selected_status == "Completed":
+    completed_filter = True
+else:
+    completed_filter = None
+
+filtered_tasks = scheduler.filter_tasks(
+    pet_name=pet_filter,
+    completed=completed_filter
+)
+
+if filtered_tasks:
+    filtered_data = []
+
+    for task in filtered_tasks:
+        filtered_data.append({
+            "Pet": scheduler.find_pet_for_task(task).name,
+            "Task": task.description,
+            "Date": str(task.due_date),
+            "Time": task.time.strftime("%I:%M %p"),
+            "Status": "Completed" if task.completed else "Pending"
+        })
+
+    st.table(filtered_data)
+
+else:
+    st.info("No tasks match your selected filters.")
+
+
+# 3. DETECT SCHEDULING CONFLICTS
+st.subheader("⚠️ Scheduling Conflicts")
+
+conflicts = scheduler.detect_conflicts()
+
+if conflicts:
+    for conflict in conflicts:
+        st.warning(conflict)
+
+else:
+    st.success("No scheduling conflicts detected!")

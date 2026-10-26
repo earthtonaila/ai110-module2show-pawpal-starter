@@ -98,6 +98,12 @@ Yes, my design changed during implementation
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
 - How did you decide which constraints mattered most?
 
+My PawPal+ scheduler primarily considers scheduled time, due date, task completion status, recurrence frequency, and pet assignment.
+
+I prioritized time and scheduling conflicts because they are the most important factors in helping pet owners manage their pets' daily routines. Feeding, walking, and other care activities often need to happen at specific times, so organizing tasks chronologically and identifying conflicts makes the scheduler more useful. 
+
+I also prioritized recurrence because many pet-care responsibilities repeat daily or weekly. I chose these constraints because they directly support the main purpose of PawPal+ while keeping the system simple, readable, and manageable to implement. More advanced features, such as task priorities and user preferences, could be added in the future.
+
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
@@ -131,6 +137,10 @@ I found that specifying at the end of my prompt to not make any changes to the c
 - Describe one moment where you did not accept an AI suggestion as-is.
 - How did you evaluate or verify what the AI suggested?
 
+The AI suggested implementing a method named sort_by_time(), but my existing Scheduler class already had a method called sort_tasks_by_time(). So, I didn't accept this modification and instead kept the original name to maintain consistency across my project.
+
+I evaluated AI suggestions by reviewing the generated code, comparing it with my existing class structure, and checking whether it met the assignment requirements.
+
 ---
 
 ## 4. Testing and Verification
@@ -140,10 +150,16 @@ I found that specifying at the end of my prompt to not make any changes to the c
 - What behaviors did you test?
 - Why were these tests important?
 
+I tested task sorting, task filtering, recurring tasks, conflict detection, and task completion. These tests were important because they helped me verify that my scheduler worked correctly and reliably.
+
 **b. Confidence**
 
 - How confident are you that your scheduler works correctly?
 - What edge cases would you test next if you had more time?
+
+I would rate my confidence in my PawPal+ scheduler as 4/5 stars because all my automated tests passed but there's still room for improvement since these pytests don't guarantee that every possible situation has been covered.
+
+If I had additional time, I would test edge cases like a pet with no scheduled tasks, multiple tasks scheduled at the same time, and recurring tasks that cross month or year boundaries.
 
 ---
 
@@ -153,10 +169,16 @@ I found that specifying at the end of my prompt to not make any changes to the c
 
 - What part of this project are you most satisfied with?
 
+The part of my PawPal+ project I'm most satisfied with is implementing the smarter scheduling features and integrating them into Streamlit interface.
+
 **b. What you would improve**
 
 - If you had another iteration, what would you improve or redesign?
 
+If I had another iteration of PawPal+, I would focus on improving conflict detection, adding task priorities, and making the user interface more interactive.
+
 **c. Key takeaway**
 
 - What is one important thing you learned about designing systems or working with AI on this project?
+
+I learned that AI is a helpful coding assistant but it is still my resonsibility to make design decisions and verify that the code works correctly
